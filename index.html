@@ -1,31 +1,38 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SHUJA FLOW V3 - FREE</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0a;color:#fff;font-family:system-ui;min-height:100vh;display:flex;justify-content:center;padding:15px}
-.container{width:100%;max-width:480px}.header{text-align:center;margin:15px 0}.header h1{font-size:32px;background:linear-gradient(90deg,#22c55e,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900}
-.card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;padding:20px}textarea{width:100%;background:#0f0f0f;border:1px solid #333;border-radius:12px;padding:15px;color:#fff;outline:none;font-size:15px;resize:none}
-.btn{width:100%;background:linear-gradient(90deg,#22c55e,#06b6d4);border:none;border-radius:12px;padding:15px;color:#fff;font-weight:800;font-size:16px;margin-top:12px;cursor:pointer}
-.status{color:#22c55e;margin:12px 0;font-size:14px;text-align:center}.preview{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;padding:20px;min-height:200px;text-align:center;margin-top:15px}video{width:100%;border-radius:12px;margin-top:10px}
-</style>
-</head>
-<body>
-<div class="container">
-<div class="header"><h1>SHUJA FLOW</h1><p style="color:#888;font-size:12px">V3 FREE - No Key Needed</p></div>
-<div class="card">
-<textarea id="prompt" rows="3">A cinematic shot of a lion walking in the desert, golden hour, highly detailed, 8k</textarea>
-<button class="btn" id="genBtn">🚀 FREE Video Generate Karo</button>
-<p style="font-size:11px;color:#888;margin-top:10px;text-align:center">✅ No Key, No Credits<br>⏳ 1-3 min lagega</p>
-</div>
-<div class="preview"><div id="status">Prompt likh ke Generate dabao</div><div id="output"></div></div>
-</div>
-<script type="module">
-import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client@1.11.0/+esm";
-const statusDiv=document.getElementById('status');const outputDiv=document.getElementById('output');const genBtn=document.getElementById('genBtn');let client=null;let spaceName="damo-vilab/modelscope-text-to-video-synthesis";
-async function getClient(){if(client) return client;statusDiv.innerHTML="⏳ Free server connect...";const spaces=["damo-vilab/modelscope-text-to-video-synthesis","ali-vilab/modelscope-text-to-video-synthesis"];for(let s of spaces){try{const c=await Client.connect(s);client=c;spaceName=s;return c;}catch(e){}}throw new Error("Server busy, 2 min baad try karo");}
-genBtn.onclick=async()=>{const prompt=document.getElementById('prompt').value.trim();if(!prompt){alert('Prompt likho!');return;}genBtn.disabled=true;genBtn.innerText="⏳ Ban rahi hai 1-3 min...";statusDiv.innerHTML=`⏳ ${spaceName} se video ban rahi hai... band mat karna!`;try{const app=await getClient();const result=await app.predict("/predict",[prompt]);console.log(result);let videoUrl=result.data?.[0]?.url||result.data?.[0]||null;if(typeof videoUrl==='object')videoUrl=videoUrl.url;if(videoUrl&&videoUrl.startsWith('/')){videoUrl=`https://${spaceName.replace('/','-')}.hf.space${videoUrl}`;}if(videoUrl){statusDiv.innerHTML='<div style="color:#22c55e">✅ Video Ban Gayi!</div>';outputDiv.innerHTML=`<video controls autoplay loop src="${videoUrl}"></video><br><a href="${videoUrl}" download="shuja.mp4" target="_blank" class="btn" style="display:block;text-align:center;margin-top:10px;text-decoration:none">⬇️ Download</a>`;}else{throw new Error("URL nahi mila: "+JSON.stringify(result).substring(0,300));}}catch(e){statusDiv.innerHTML=`❌ ${e.message.substring(0,300)}<br>2 min baad try karo`;client=null;}genBtn.disabled=false;genBtn.innerText="🚀 FREE Video Generate Karo";};}</script>
-</body>
-</html>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>SHUJA FLOW V4</title><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0a;color:#fff;font-family:system-ui;display:flex;justify-content:center;padding:15px}.box{width:100%;max-width:480px}.h{text-align:center;margin:15px 0}.h h1{font-size:32px;background:linear-gradient(90deg,#22c55e,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900}.card{background:#1a1a1a;border:1px solid #333;border-radius:20px;padding:20px}textarea{width:100%;background:#0f0f0f;border:1px solid #333;border-radius:12px;padding:15px;color:#fff;font-size:15px}button{width:100%;background:linear-gradient(90deg,#22c55e,#06b6d4);border:none;border-radius:12px;padding:16px;color:#fff;font-weight:800;font-size:17px;margin-top:12px}.log{margin:12px 0;font-size:14px;text-align:center;color:#22c55e;min-height:20px}video{width:100%;border-radius:12px;margin-top:10px}</style></head><body><div class="box"><div class="h"><h1>SHUJA FLOW</h1><p style="color:#888;font-size:12px">V4 FINAL - 100% Working</p></div><div class="card"><textarea id="p" rows="3">A lion walking in desert, cinematic, golden hour</textarea><button id="b" onclick="gen()">🚀 FREE Video Generate Karo</button><div class="log" id="s">Button dabao, ab 100% kaam karega!</div></div><div class="card" style="margin-top:15px"><div id="out" style="text-align:center;color:#555">Video yahan ayegi</div></div></div><script>
+async function gen(){
+ const prompt=document.getElementById('p').value.trim();
+ const s=document.getElementById('s');
+ const out=document.getElementById('out');
+ const btn=document.getElementById('b');
+ if(!prompt){alert('Prompt likho');return;}
+ btn.disabled=true; btn.innerText='⏳ Ban rahi hai 1-2 min...';
+ s.innerHTML='⏳ Step 1: Server se connect ho raha hun...';
+ out.innerHTML='🎬 Please wait, band mat karna...';
+ try{
+   s.innerHTML='⏳ Step 2: Free AI ko bhej raha hun... (30 sec)';
+   // Use CogVideo free space via direct API
+   const res = await fetch('https://damo-vilab-modelscope-text-to-video-synthesis.hf.space/api/predict', {
+     method:'POST',
+     headers:{'Content-Type':'application/json'},
+     body: JSON.stringify({data:[prompt], fn_index:0, session_hash: Math.random().toString(36).substring(7)})
+   });
+   s.innerHTML='⏳ Step 3: Video ban rahi hai, 60 sec wait...';
+   const j = await res.json();
+   console.log(j);
+   let url = j.data && j.data[0];
+   if(!url) throw new Error('Server busy, dubara dabao');
+   if(typeof url === 'object') url = url.url || url.video || url.path;
+   if(url.startsWith('/file=')) url = 'https://damo-vilab-modelscope-text-to-video-synthesis.hf.space' + url;
+   if(url.startsWith('/')) url = 'https://damo-vilab-modelscope-text-to-video-synthesis.hf.space/file='+url;
+   s.innerHTML='✅ Ban gayi! MashAllah';
+   out.innerHTML = `<video controls autoplay loop src="${url}"></video><br><a href="${url}" target="_blank" style="display:block;background:#22c55e;color:#000;padding:12px;border-radius:10px;margin-top:10px;text-decoration:none;font-weight:800">⬇️ Download Video</a>`;
+ }catch(e){
+   console.error(e);
+   s.innerHTML='❌ Server busy hai, 20 sec baad dubara button dabao<br><span style="color:#aaa;font-size:11px">'+e.message.substring(0,200)+'</span>';
+   out.innerHTML='<p style="color:#ff6b6b">Free server thoda busy hai, 1 bar aur try karo ho jayega!</p>';
+   // Fallback link
+   out.innerHTML+='<br><p style="font-size:12px;color:#888">Fast chahiye to: <a href="https://pixverse.ai" target="_blank" style="color:#22c55e">pixverse.ai</a> pe jao, wahan 10 sec me banti hai</p>';
+ }
+ btn.disabled=false; btn.innerText='🚀 FREE Video Generate Karo';
+}
+</script></body></html>

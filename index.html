@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SHUJA FLOW - Final Fixed</title>
+<title>SHUJA FLOW - V2 Fixed</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0a0a0a;color:#fff;font-family:Inter,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:15px}
@@ -16,60 +16,64 @@ select,input{width:100%;background:#0f0f0f;border:1px solid #333;border-radius:1
 .btn{width:100%;background:linear-gradient(90deg,#a855f7,#ec4899);border:none;border-radius:12px;padding:15px;color:#fff;font-weight:700;font-size:16px;margin-top:12px;cursor:pointer}
 .btn2{width:100%;background:#222;border:1px solid #444;border-radius:12px;padding:10px;color:#aaa;font-size:13px;margin-top:8px;cursor:pointer}
 .preview{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;padding:20px;min-height:200px;text-align:center;margin-top:15px}
+.error{color:#ff6b6b;margin:10px 0;font-size:13px}
 .status{color:#a855f7;margin:10px 0;font-size:14px}
 video{width:100%;border-radius:12px;margin-top:10px}
 </style>
 </head>
 <body>
 <div class="container">
-<div class="header"><h1>SHUJA FLOW</h1><p style="color:#666;font-size:12px">Fixed Version | Chrome me kholo</p></div>
+<div class="header"><h1>SHUJA FLOW</h1><p style="color:#666;font-size:12px">V2 Fixed - Wan 2.2 Model NEW</p></div>
 <div class="card">
-<textarea id="prompt" rows="3">A cinematic shot of a lion walking in the desert, golden hour, 8k</textarea>
-<select><option>8s Duration</option></select>
+<textarea id="prompt" rows="3">A cinematic shot of a lion walking in the desert, golden hour, 8k, highly detailed</textarea>
+<select><option>5s Duration</option></select>
 <select><option>9:16 Vertical</option></select>
 <input type="password" id="apikey" placeholder="HF Key yahan paste karo (hf_...)">
-<button class="btn" id="genBtn" onclick="generate()">Generate Video ▶</button>
-<button class="btn2" onclick="testKey()">🔑 Key Check Karo</button>
+<button class="btn" id="genBtn">Generate Video ▶</button>
+<button class="btn2" id="checkBtn">🔑 Key Check Karo</button>
 </div>
-<div class="preview"><div id="status"></div><div id="output"><p style="color:#555;margin-top:30px">Video yahan ayegi... Chrome me kholo zaruri hai.</p></div></div>
+<div class="preview"><div id="status"></div><div id="output"><p style="color:#555;margin-top:30px">Naya model ready hai!</p></div></div>
 </div>
-<script>
-const saved = localStorage.getItem('shuja_hf_key_final');
+<script type="module">
+import { InferenceClient } from 'https://cdn.jsdelivr.net/npm/@huggingface/inference@4.13.22/+esm';
+const saved = localStorage.getItem('shuja_hf_key_v2');
 if(saved) document.getElementById('apikey').value = saved;
-async function testKey(){
+const statusDiv = document.getElementById('status');
+const outputDiv = document.getElementById('output');
+const genBtn = document.getElementById('genBtn');
+const checkBtn = document.getElementById('checkBtn');
+checkBtn.onclick = async () => {
  const k = document.getElementById('apikey').value.trim();
- const s = document.getElementById('status');
- s.innerHTML='Checking...';
+ statusDiv.innerHTML='Checking...';
  try{
   const r = await fetch('https://huggingface.co/api/whoami-v2',{headers:{'Authorization':'Bearer '+k}});
-  if(r.ok){ s.innerHTML='<div style="color:#4ade80">✅ Key Theek Hai!</div>'; }
-  else{ s.innerHTML='❌ Key galat hai'; }
- }catch(e){ s.innerHTML='Chrome me kholo: '+e.message; }
-}
-async function generate(){
- const prompt=document.getElementById('prompt').value.trim();
- const key=document.getElementById('apikey').value.trim();
- const btn=document.getElementById('genBtn');
- const statusDiv=document.getElementById('status');
- const outputDiv=document.getElementById('output');
+  if(r.ok){ statusDiv.innerHTML='<div style="color:#4ade80">✅ Key Theek Hai!</div>'; }
+  else{ statusDiv.innerHTML='❌ Key galat'; }
+ }catch(e){ statusDiv.innerHTML='Error: '+e.message; }
+};
+genBtn.onclick = async () => {
+ const prompt = document.getElementById('prompt').value.trim();
+ const key = document.getElementById('apikey').value.trim();
  if(!key.startsWith('hf_')){ alert('HF Key paste karo!'); return; }
- localStorage.setItem('shuja_hf_key_final', key);
- btn.disabled=true; btn.innerText='⏳ Loading...';
- statusDiv.innerHTML='⏳ Model jag raha hai 30 sec...';
- const MODEL="ali-vilab/text-to-video-ms-1.7b";
- const URL=`https://router.huggingface.co/hf-inference/models/${MODEL}`;
+ localStorage.setItem('shuja_hf_key_v2', key);
+ genBtn.disabled=true; genBtn.innerText='⏳ Generating 30-90s...';
+ statusDiv.innerHTML='⏳ Wan 2.2 se video ban rahi hai, 1-2 min wait...';
  try{
-  const res = await fetch(URL,{method:'POST',headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json','x-wait-for-model':'true'},body:JSON.stringify({inputs:prompt})});
-  if(!res.ok){ const t=await res.text(); throw new Error(t.substring(0,200)); }
-  const blob=await res.blob();
-  const videoUrl=URL.createObjectURL(blob);
+  const client = new InferenceClient(key);
+  const videoBlob = await client.textToVideo({
+    model: "Wan-AI/Wan2.2-T2V-A14B",
+    inputs: prompt,
+    provider: "fal-ai",
+  });
+  const blob = videoBlob instanceof Blob? videoBlob : new Blob([videoBlob], {type: 'video/mp4'});
+  const videoUrl = URL.createObjectURL(blob);
   statusDiv.innerHTML='<div style="color:#4ade80">✅ Video Ban Gayi!</div>';
   outputDiv.innerHTML=`<video controls autoplay loop src="${videoUrl}"></video><br><a href="${videoUrl}" download="shuja-flow.mp4" class="btn" style="display:block;text-align:center;margin-top:10px;text-decoration:none">⬇️ Download</a>`;
  }catch(e){
-  statusDiv.innerHTML=`❌ ${e.message}<br><small>Tip: Chrome me kholo, WhatsApp browser block karta hai</small>`;
+  statusDiv.innerHTML=`❌ Error: ${e.message.substring(0,300)}<br>2 min baad retry karo`;
  }
- btn.disabled=false; btn.innerText='Generate Video ▶';
-}
+ genBtn.disabled=false; genBtn.innerText='Generate Video ▶';
+};
 </script>
 </body>
 </html>
